@@ -3,6 +3,5 @@
   "devCommand": "npm run dev",
   "installCommand": "npm ci",
   "framework": "nextjs",
-  "regions": ["iad1"],
-  "skewProtection": false
+  "regions": ["iad1"]
 }
