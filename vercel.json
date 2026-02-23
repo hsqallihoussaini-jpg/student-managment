@@ -3,11 +3,6 @@
   "devCommand": "npm run dev",
   "installCommand": "npm ci",
   "framework": "nextjs",
-  "env": {
-    "NEXTAUTH_SECRET": "@nextauth_secret",
-    "NEXTAUTH_URL": "@nextauth_url",
-    "DATABASE_PATH": "./database.db"
-  },
   "functions": {
     "api/**/*.ts": {
       "maxDuration": 10
