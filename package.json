@@ -2,7 +2,6 @@
   "name": "student-management",
   "version": "1.0.0",
   "description": "Application de gestion des étudiants",
-  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,7 +13,11 @@
     "next-auth": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "styled-jsx": "^5.1.7"
+    "styled-jsx": "^5.1.7",
+    "sqlite3": "latest",
+    "bcryptjs": "latest",
+    "cors": "latest",
+    "express": "latest"
   },
   "devDependencies": {
     "@types/node": "latest",
