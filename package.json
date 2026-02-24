@@ -17,7 +17,8 @@
     "sqlite3": "latest",
     "bcryptjs": "latest",
     "cors": "latest",
-    "express": "latest"
+    "express": "latest",
+    "@tailwindcss/postcss": "4.0.0-alpha.11"
   },
   "devDependencies": {
     "@types/node": "latest",
