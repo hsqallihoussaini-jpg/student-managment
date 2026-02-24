@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import { getQuery, runQuery } from './db';
+import { getQuery, runQuery } from '@/lib/db';
 
 let nextAuthConfigured = false;
 
