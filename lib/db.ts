@@ -100,43 +100,67 @@ export function getDatabase() {
 }
 
 export function runQuery(sql: string, params: any[] = []) {
-  return new Promise<any>((resolve, reject) => {
-    if (!db) {
-      reject(new Error('Database not initialized'));
-      return;
+  return new Promise<any>(async (resolve, reject) => {
+    try {
+      if (!db) {
+        await openDatabase();
+      }
+      
+      if (!db) {
+        reject(new Error('Database not initialized'));
+        return;
+      }
+      
+      db.run(sql, params, function(err) {
+        if (err) reject(err);
+        else resolve({ lastID: this.lastID, changes: this.changes });
+      });
+    } catch (error) {
+      reject(error);
     }
-    
-    db.run(sql, params, function(err) {
-      if (err) reject(err);
-      else resolve({ lastID: this.lastID, changes: this.changes });
-    });
   });
 }
 
 export function getQuery(sql: string, params: any[] = []) {
-  return new Promise<any>((resolve, reject) => {
-    if (!db) {
-      reject(new Error('Database not initialized'));
-      return;
+  return new Promise<any>(async (resolve, reject) => {
+    try {
+      if (!db) {
+        await openDatabase();
+      }
+      
+      if (!db) {
+        reject(new Error('Database not initialized'));
+        return;
+      }
+      
+      db.get(sql, params, (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
+    } catch (error) {
+      reject(error);
     }
-    
-    db.get(sql, params, (err, row) => {
-      if (err) reject(err);
-      else resolve(row);
-    });
   });
 }
 
 export function allQuery(sql: string, params: any[] = []) {
-  return new Promise<any[]>((resolve, reject) => {
-    if (!db) {
-      reject(new Error('Database not initialized'));
-      return;
+  return new Promise<any[]>(async (resolve, reject) => {
+    try {
+      if (!db) {
+        await openDatabase();
+      }
+      
+      if (!db) {
+        reject(new Error('Database not initialized'));
+        return;
+      }
+      
+      db.all(sql, params, (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows || []);
+      });
+    } catch (error) {
+      reject(error);
     }
-    
-    db.all(sql, params, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows || []);
-    });
   });
 }
