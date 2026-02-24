@@ -115,6 +115,16 @@ export default function LoginPage() {
               <p className="text-gray-700 text-xs font-mono">Mot de passe: <span className="text-rose-600 font-bold">admin123</span></p>
             </div>
           </div>
+
+          <div className="mt-6 text-center">
+            <p className="text-gray-700 text-sm">Pas encore inscrit?</p>
+            <a
+              href="/register"
+              className="inline-block mt-2 px-6 py-2 bg-gradient-to-r from-orange-500 to-rose-500 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-rose-600 transition transform hover:scale-105"
+            >
+              Créer un compte
+            </a>
+          </div>
         </div>
       </div>
     </div>
