@@ -87,7 +87,69 @@ export async function initializeDatabase() {
         UNIQUE(studentId, courseId)
       )
     `);
-    
+
+    // Teachers table
+    await run(`
+      CREATE TABLE IF NOT EXISTS teachers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        firstName TEXT NOT NULL,
+        lastName TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        phone TEXT,
+        department TEXT,
+        specialization TEXT,
+        office TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Messages table for communication
+    await run(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        senderId INTEGER NOT NULL,
+        senderRole TEXT NOT NULL,
+        recipientId INTEGER NOT NULL,
+        recipientRole TEXT NOT NULL,
+        subject TEXT,
+        content TEXT NOT NULL,
+        isRead BOOLEAN DEFAULT 0,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Teacher notes table for grades and notes on students
+    await run(`
+      CREATE TABLE IF NOT EXISTS teacher_notes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        teacherId INTEGER NOT NULL,
+        studentId INTEGER NOT NULL,
+        courseId INTEGER,
+        grade TEXT,
+        notes TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(teacherId) REFERENCES teachers(id),
+        FOREIGN KEY(studentId) REFERENCES students(id),
+        FOREIGN KEY(courseId) REFERENCES courses(id)
+      )
+    `);
+
+    // Update courses table to add teacherId
+    await run(`
+      CREATE TABLE IF NOT EXISTS courses_new (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        code TEXT UNIQUE NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT,
+        credits INTEGER,
+        semester TEXT,
+        teacherId INTEGER,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(teacherId) REFERENCES teachers(id)
+      )
+    `);
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Error initializing database:', error);
