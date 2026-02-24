@@ -36,24 +36,27 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50">
       {/* Background Animation */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-rose-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
       <div className="relative w-full max-w-md">
-        <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/30">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent text-center mb-2">
-              Gestion des Étudiants
-            </h1>
-            <p className="text-center text-gray-300 text-sm">Système de gestion académique</p>
+            <div className="inline-block w-full">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-500 bg-clip-text text-transparent text-center mb-2">
+                Gestion des Étudiants
+              </h1>
+            </div>
+            <p className="text-center text-gray-600 text-sm font-medium">Système de gestion académique</p>
           </div>
           
           {error && (
-            <div className="bg-red-500/20 border border-red-400/50 text-red-200 px-4 py-3 rounded-lg mb-6 flex items-center gap-2 backdrop-blur">
+            <div className="bg-rose-100 border border-rose-300 text-rose-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2 backdrop-blur">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
@@ -63,24 +66,24 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit}>
             <div className="mb-5">
-              <label className="block text-gray-100 font-semibold mb-2 text-sm">Email</label>
+              <label className="block text-gray-700 font-semibold mb-2 text-sm">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition backdrop-blur"
+                className="w-full px-4 py-3 bg-gradient-to-r from-rose-50 to-orange-50 border-2 border-rose-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition"
                 placeholder="admin@example.com"
                 required
               />
             </div>
 
             <div className="mb-6">
-              <label className="block text-gray-100 font-semibold mb-2 text-sm">Mot de passe</label>
+              <label className="block text-gray-700 font-semibold mb-2 text-sm">Mot de passe</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition backdrop-blur"
+                className="w-full px-4 py-3 bg-gradient-to-r from-rose-50 to-orange-50 border-2 border-rose-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition"
                 placeholder="••••••••"
                 required
               />
@@ -89,7 +92,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-3 px-4 rounded-xl transition duration-200 disabled:opacity-50 transform hover:scale-105 active:scale-95 shadow-lg"
+              className="w-full bg-gradient-to-r from-rose-500 via-pink-500 to-orange-500 hover:from-rose-600 hover:via-pink-600 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-xl transition duration-200 disabled:opacity-50 transform hover:scale-105 active:scale-95 shadow-lg shadow-rose-300/50"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -105,11 +108,11 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 p-4 bg-blue-500/10 border border-blue-400/30 rounded-xl backdrop-blur">
-            <p className="text-blue-200 text-sm font-semibold mb-2">📝 Identifiants de test:</p>
+          <div className="mt-6 p-4 bg-gradient-to-r from-rose-100 to-orange-100 border border-rose-300 rounded-xl">
+            <p className="text-rose-700 text-sm font-semibold mb-2">📝 Identifiants de test:</p>
             <div className="space-y-1">
-              <p className="text-gray-300 text-xs font-mono">Email: <span className="text-blue-300">admin@example.com</span></p>
-              <p className="text-gray-300 text-xs font-mono">Mot de passe: <span className="text-blue-300">admin123</span></p>
+              <p className="text-gray-700 text-xs font-mono">Email: <span className="text-rose-600 font-bold">admin@example.com</span></p>
+              <p className="text-gray-700 text-xs font-mono">Mot de passe: <span className="text-rose-600 font-bold">admin123</span></p>
             </div>
           </div>
         </div>
