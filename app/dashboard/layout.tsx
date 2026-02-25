@@ -94,18 +94,38 @@ export default function DashboardLayout({
 
             {userRole === 'student' && (
               <>
-                <div className="text-xs font-bold text-rose-600 uppercase px-4 py-2 mt-4">Mes cours</div>
+                <div className="text-xs font-bold text-rose-600 uppercase px-4 py-2 mt-4">Études</div>
+                <Link
+                  href="/dashboard/student/program"
+                  className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
+                >
+                  📚 Mon Programme
+                </Link>
                 <Link
                   href="/dashboard/courses"
                   className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
                 >
-                  📚 Mes cours
+                  🎓 Mes Cours
                 </Link>
 
-                <div className="text-xs font-bold text-orange-600 uppercase px-4 py-2 mt-4">Communication</div>
+                <div className="text-xs font-bold text-orange-600 uppercase px-4 py-2 mt-4">Organisation</div>
+                <Link
+                  href="/dashboard/student/notes"
+                  className="block px-4 py-3 text-gray-700 hover:bg-orange-50 border-l-4 border-transparent hover:border-orange-500 rounded-lg transition"
+                >
+                  📝 Mes Notes
+                </Link>
+                <Link
+                  href="/dashboard/student/schedule"
+                  className="block px-4 py-3 text-gray-700 hover:bg-orange-50 border-l-4 border-transparent hover:border-orange-500 rounded-lg transition"
+                >
+                  ⏰ Emploi du Temps
+                </Link>
+
+                <div className="text-xs font-bold text-blue-600 uppercase px-4 py-2 mt-4">Communication</div>
                 <Link
                   href="/dashboard/messages"
-                  className="block px-4 py-3 text-gray-700 hover:bg-orange-50 border-l-4 border-transparent hover:border-orange-500 rounded-lg transition"
+                  className="block px-4 py-3 text-gray-700 hover:bg-blue-50 border-l-4 border-transparent hover:border-blue-500 rounded-lg transition"
                 >
                   💬 Messages
                 </Link>

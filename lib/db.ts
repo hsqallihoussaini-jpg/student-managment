@@ -162,6 +162,39 @@ export async function initializeDatabase() {
       )
     `);
 
+    // Student notes per course
+    await run(`
+      CREATE TABLE IF NOT EXISTS student_notes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        studentId INTEGER NOT NULL,
+        courseId INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        content TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(studentId) REFERENCES students(id),
+        FOREIGN KEY(courseId) REFERENCES courses(id)
+      )
+    `);
+
+    // Student schedule
+    await run(`
+      CREATE TABLE IF NOT EXISTS student_schedule (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        studentId INTEGER NOT NULL,
+        courseId INTEGER NOT NULL,
+        dayOfWeek TEXT NOT NULL,
+        startTime TEXT NOT NULL,
+        endTime TEXT NOT NULL,
+        room TEXT,
+        instructor TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(studentId) REFERENCES students(id),
+        FOREIGN KEY(courseId) REFERENCES courses(id)
+      )
+    `);
+
     // Insert predefined courses
     const predefinedCourses = [
       ['ALGO101', 'Algorithme', 'Introduction aux algorithmes et structures de données', 3],
