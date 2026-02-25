@@ -195,6 +195,104 @@ export async function initializeDatabase() {
       )
     `);
 
+    // Assignments (Devoirs)
+    await run(`
+      CREATE TABLE IF NOT EXISTS assignments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT,
+        courseId INTEGER NOT NULL,
+        teacherId INTEGER NOT NULL,
+        dueDate DATETIME NOT NULL,
+        maxScore REAL DEFAULT 20,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(courseId) REFERENCES courses(id),
+        FOREIGN KEY(teacherId) REFERENCES teachers(id)
+      )
+    `);
+
+    // Submissions (Soumissions de devoirs)
+    await run(`
+      CREATE TABLE IF NOT EXISTS submissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        assignmentId INTEGER NOT NULL,
+        studentId INTEGER NOT NULL,
+        fileName TEXT,
+        fileContent TEXT,
+        grade REAL,
+        feedback TEXT,
+        submittedAt DATETIME,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(assignmentId) REFERENCES assignments(id),
+        FOREIGN KEY(studentId) REFERENCES students(id),
+        UNIQUE(assignmentId, studentId)
+      )
+    `);
+
+    // Quizzes (QCM/Tests)
+    await run(`
+      CREATE TABLE IF NOT EXISTS quizzes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT,
+        courseId INTEGER NOT NULL,
+        teacherId INTEGER NOT NULL,
+        dueDate DATETIME NOT NULL,
+        timeLimit INTEGER,
+        totalPoints REAL DEFAULT 20,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(courseId) REFERENCES courses(id),
+        FOREIGN KEY(teacherId) REFERENCES teachers(id)
+      )
+    `);
+
+    // Quiz Questions
+    await run(`
+      CREATE TABLE IF NOT EXISTS quiz_questions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        quizId INTEGER NOT NULL,
+        questionText TEXT NOT NULL,
+        questionType TEXT DEFAULT 'mcq',
+        options TEXT,
+        correctAnswer TEXT,
+        points REAL DEFAULT 1,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(quizId) REFERENCES quizzes(id)
+      )
+    `);
+
+    // Quiz Answers (Réponses des étudiants)
+    await run(`
+      CREATE TABLE IF NOT EXISTS quiz_answers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        quizId INTEGER NOT NULL,
+        studentId INTEGER NOT NULL,
+        answers TEXT,
+        score REAL,
+        isSubmitted BOOLEAN DEFAULT 0,
+        submittedAt DATETIME,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(quizId) REFERENCES quizzes(id),
+        FOREIGN KEY(studentId) REFERENCES students(id),
+        UNIQUE(quizId, studentId)
+      )
+    `);
+
+    // Announcements (Annonces)
+    await run(`
+      CREATE TABLE IF NOT EXISTS announcements (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        courseId INTEGER NOT NULL,
+        teacherId INTEGER NOT NULL,
+        priority TEXT DEFAULT 'normal',
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(courseId) REFERENCES courses(id),
+        FOREIGN KEY(teacherId) REFERENCES teachers(id)
+      )
+    `);
+
     // Insert predefined courses
     const predefinedCourses = [
       ['ALGO101', 'Algorithme', 'Introduction aux algorithmes et structures de données', 3],

@@ -122,6 +122,26 @@ export default function DashboardLayout({
                   ⏰ Emploi du Temps
                 </Link>
 
+                <div className="text-xs font-bold text-green-600 uppercase px-4 py-2 mt-4">Évaluations</div>
+                <Link
+                  href="/dashboard/student/assignments"
+                  className="block px-4 py-3 text-gray-700 hover:bg-green-50 border-l-4 border-transparent hover:border-green-500 rounded-lg transition"
+                >
+                  ✏️ Mes Devoirs
+                </Link>
+                <Link
+                  href="/dashboard/student/bulletin"
+                  className="block px-4 py-3 text-gray-700 hover:bg-green-50 border-l-4 border-transparent hover:border-green-500 rounded-lg transition"
+                >
+                  📊 Mon Bulletin
+                </Link>
+                <Link
+                  href="/dashboard/student/announcements"
+                  className="block px-4 py-3 text-gray-700 hover:bg-green-50 border-l-4 border-transparent hover:border-green-500 rounded-lg transition"
+                >
+                  📢 Annonces
+                </Link>
+
                 <div className="text-xs font-bold text-blue-600 uppercase px-4 py-2 mt-4">Communication</div>
                 <Link
                   href="/dashboard/messages"
@@ -142,10 +162,28 @@ export default function DashboardLayout({
                   📚 Mes cours
                 </Link>
                 <Link
+                  href="/dashboard/teacher/assignments"
+                  className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
+                >
+                  📝 Devoirs
+                </Link>
+                <Link
+                  href="/dashboard/teacher/quizzes"
+                  className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
+                >
+                  🎯 QCM/Tests
+                </Link>
+                <Link
+                  href="/dashboard/teacher/announcements"
+                  className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
+                >
+                  📢 Annonces
+                </Link>
+                <Link
                   href="/dashboard/teacher/grades"
                   className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
                 >
-                  📝 Gérer les notes
+                  📊 Gérer les notes
                 </Link>
                 <Link
                   href="/dashboard/teacher/notes-students"
