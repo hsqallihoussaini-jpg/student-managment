@@ -142,6 +142,26 @@ export default function DashboardLayout({
                   📢 Annonces
                 </Link>
 
+                <div className="text-xs font-bold text-purple-600 uppercase px-4 py-2 mt-4">Phase 2</div>
+                <Link
+                  href="/dashboard/student/materials"
+                  className="block px-4 py-3 text-gray-700 hover:bg-purple-50 border-l-4 border-transparent hover:border-purple-500 rounded-lg transition"
+                >
+                  📚 Supports de Cours
+                </Link>
+                <Link
+                  href="/dashboard/student/attendance"
+                  className="block px-4 py-3 text-gray-700 hover:bg-purple-50 border-l-4 border-transparent hover:border-purple-500 rounded-lg transition"
+                >
+                  📋 Ma Présence
+                </Link>
+                <Link
+                  href="/dashboard/student/notifications"
+                  className="block px-4 py-3 text-gray-700 hover:bg-purple-50 border-l-4 border-transparent hover:border-purple-500 rounded-lg transition"
+                >
+                  🔔 Notifications
+                </Link>
+
                 <div className="text-xs font-bold text-blue-600 uppercase px-4 py-2 mt-4">Communication</div>
                 <Link
                   href="/dashboard/messages"
@@ -190,6 +210,20 @@ export default function DashboardLayout({
                   className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
                 >
                   📋 Notes sur étudiants
+                </Link>
+
+                <div className="text-xs font-bold text-purple-600 uppercase px-4 py-2 mt-4">Phase 2</div>
+                <Link
+                  href="/dashboard/teacher/materials"
+                  className="block px-4 py-3 text-gray-700 hover:bg-purple-50 border-l-4 border-transparent hover:border-purple-500 rounded-lg transition"
+                >
+                  📚 Matériaux de Cours
+                </Link>
+                <Link
+                  href="/dashboard/teacher/attendance"
+                  className="block px-4 py-3 text-gray-700 hover:bg-purple-50 border-l-4 border-transparent hover:border-purple-500 rounded-lg transition"
+                >
+                  📋 Gestion Présence
                 </Link>
 
                 <div className="text-xs font-bold text-orange-600 uppercase px-4 py-2 mt-4">ADMINISTRATION</div>

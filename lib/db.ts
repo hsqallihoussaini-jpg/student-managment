@@ -293,6 +293,60 @@ export async function initializeDatabase() {
       )
     `);
 
+    // Course Materials (PDF, Vidéos)
+    await run(`
+      CREATE TABLE IF NOT EXISTS course_materials (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        courseId INTEGER NOT NULL,
+        teacherId INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        type TEXT DEFAULT 'pdf',
+        fileName TEXT NOT NULL,
+        fileUrl TEXT,
+        fileSize INTEGER,
+        duration INTEGER,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(courseId) REFERENCES courses(id),
+        FOREIGN KEY(teacherId) REFERENCES teachers(id)
+      )
+    `);
+
+    // Attendance / Presence
+    await run(`
+      CREATE TABLE IF NOT EXISTS attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        courseId INTEGER NOT NULL,
+        studentId INTEGER NOT NULL,
+        sessionDate DATETIME NOT NULL,
+        status TEXT DEFAULT 'present',
+        qrCodeScanned BOOLEAN DEFAULT 0,
+        markedAt DATETIME,
+        notes TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(courseId) REFERENCES courses(id),
+        FOREIGN KEY(studentId) REFERENCES students(id),
+        UNIQUE(courseId, studentId, sessionDate)
+      )
+    `);
+
+    // Notifications
+    await run(`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        studentId INTEGER NOT NULL,
+        courseId INTEGER,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        type TEXT DEFAULT 'info',
+        isRead BOOLEAN DEFAULT 0,
+        actionUrl TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(studentId) REFERENCES students(id),
+        FOREIGN KEY(courseId) REFERENCES courses(id)
+      )
+    `);
+
     // Insert predefined courses
     const predefinedCourses = [
       ['ALGO101', 'Algorithme', 'Introduction aux algorithmes et structures de données', 3],
