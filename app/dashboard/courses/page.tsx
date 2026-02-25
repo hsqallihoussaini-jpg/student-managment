@@ -53,22 +53,35 @@ export default function CoursesPage() {
 
         // Get all courses
         const coursesResponse = await fetch('/api/courses');
-        const coursesData = await coursesResponse.json();
-        setAllCourses(coursesData);
+        if (coursesResponse.ok) {
+          const coursesData = await coursesResponse.json();
+          const coursesList = Array.isArray(coursesData) ? coursesData : [];
+          setAllCourses(coursesList);
 
-        // Get student's enrolled courses
-        const enrolledResponse = await fetch(`/api/students/${student.id}/courses`);
-        const enrolledData = await enrolledResponse.json();
-        
-        const enrolledCourses = coursesData.map((course: Course) => ({
-          ...course,
-          isEnrolled: enrolledData.some((ec: any) => ec.id === course.id),
-          enrolledAt: enrolledData.find((ec: any) => ec.id === course.id)?.enrolledAt || '',
-        }));
+          // Get student's enrolled courses
+          const enrolledResponse = await fetch(`/api/students/${student.id}/courses`);
+          if (enrolledResponse.ok) {
+            const enrolledData = await enrolledResponse.json();
+            const enrolledList = Array.isArray(enrolledData) ? enrolledData : [];
+            
+            const enrolledCourses = coursesList.map((course: Course) => ({
+              ...course,
+              isEnrolled: enrolledList.some((ec: any) => ec.id === course.id),
+              enrolledAt: enrolledList.find((ec: any) => ec.id === course.id)?.enrolledAt || '',
+            }));
 
-        setCourses(enrolledCourses);
+            setCourses(enrolledCourses);
+          } else {
+            setCourses(coursesList.map(c => ({ ...c, isEnrolled: false, enrolledAt: '' })));
+          }
+        } else {
+          setAllCourses([]);
+          setCourses([]);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erreur lors du chargement des cours');
+        setAllCourses([]);
+        setCourses([]);
       } finally {
         setLoading(false);
       }

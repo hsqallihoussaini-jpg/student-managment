@@ -51,28 +51,39 @@ export default function TeacherGradesPage() {
 
         // Get teacher's courses
         const coursesResponse = await fetch(`/api/teachers/${teacher.id}/courses`);
-        const coursesData = await coursesResponse.json();
-        setCourses(coursesData);
+        if (coursesResponse.ok) {
+          const coursesData = await coursesResponse.json();
+          const coursesList = Array.isArray(coursesData) ? coursesData : [];
+          setCourses(coursesList);
 
-        if (coursesData.length > 0) {
-          setSelectedCourse(coursesData[0].id);
+          if (coursesList.length > 0) {
+            setSelectedCourse(coursesList[0].id);
 
-          // Get enrollments for first course
-          const enrollmentsResponse = await fetch(`/api/courses/${coursesData[0].id}/enrollments`);
-          if (enrollmentsResponse.ok) {
-            const enrollmentsData = await enrollmentsResponse.json();
-            setEnrollments(enrollmentsData);
-            
-            // Initialize grades
-            const initialGrades: { [key: number]: string } = {};
-            enrollmentsData.forEach((e: Enrollment) => {
-              initialGrades[e.id] = e.grade || '';
-            });
-            setGrades(initialGrades);
+            // Get enrollments for first course
+            const enrollmentsResponse = await fetch(`/api/courses/${coursesList[0].id}/enrollments`);
+            if (enrollmentsResponse.ok) {
+              const enrollmentsData = await enrollmentsResponse.json();
+              const enrollmentsList = Array.isArray(enrollmentsData) ? enrollmentsData : [];
+              setEnrollments(enrollmentsList);
+              
+              // Initialize grades
+              const initialGrades: { [key: number]: string } = {};
+              enrollmentsList.forEach((e: Enrollment) => {
+                initialGrades[e.id] = e.grade || '';
+              });
+              setGrades(initialGrades);
+            }
           }
+        } else {
+          setCourses([]);
+          setEnrollments([]);
+          setGrades({});
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erreur lors du chargement');
+        setCourses([]);
+        setEnrollments([]);
+        setGrades({});
       } finally {
         setLoading(false);
       }
@@ -88,16 +99,22 @@ export default function TeacherGradesPage() {
       const enrollmentsResponse = await fetch(`/api/courses/${courseId}/enrollments`);
       if (enrollmentsResponse.ok) {
         const enrollmentsData = await enrollmentsResponse.json();
-        setEnrollments(enrollmentsData);
+        const enrollmentsList = Array.isArray(enrollmentsData) ? enrollmentsData : [];
+        setEnrollments(enrollmentsList);
         
         const initialGrades: { [key: number]: string } = {};
-        enrollmentsData.forEach((e: Enrollment) => {
+        enrollmentsList.forEach((e: Enrollment) => {
           initialGrades[e.id] = e.grade || '';
         });
         setGrades(initialGrades);
+      } else {
+        setEnrollments([]);
+        setGrades({});
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement des inscriptions');
+      setEnrollments([]);
+      setGrades({});
     }
   };
 

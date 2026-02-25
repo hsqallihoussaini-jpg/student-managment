@@ -48,35 +48,48 @@ export default function MessagesPage() {
 
         // Determine role and get userId
         const studentsResponse = await fetch('/api/students');
-        const studentsData = await studentsResponse.json();
-        const student = studentsData.find((s: any) => s.email === sessionData.user.email);
+        if (studentsResponse.ok) {
+          const studentsData = await studentsResponse.json();
+          const studentsList = Array.isArray(studentsData) ? studentsData : [];
+          const student = studentsList.find((s: any) => s.email === sessionData.user.email);
 
-        const teachersResponse = await fetch('/api/teachers');
-        const teachersData = await teachersResponse.json();
-        const teacher = teachersData.find((t: any) => t.email === sessionData.user.email);
+          const teachersResponse = await fetch('/api/teachers');
+          if (teachersResponse.ok) {
+            const teachersData = await teachersResponse.json();
+            const teachersList = Array.isArray(teachersData) ? teachersData : [];
+            const teacher = teachersList.find((t: any) => t.email === sessionData.user.email);
 
-        if (student) {
-          setRole('student');
-          setUserId(student.id);
-          setRecipients(teachersData);
-        } else if (teacher) {
-          setRole('teacher');
-          setUserId(teacher.id);
-          setRecipients(studentsData);
-        } else {
-          router.push('/login');
-          return;
-        }
-
-        // Get messages
-        if (student) {
-          const messagesResponse = await fetch(`/api/messages?recipientId=${student.id}&recipientRole=student`);
-          const messagesData = await messagesResponse.json();
-          setMessages(messagesData);
-        } else if (teacher) {
-          const messagesResponse = await fetch(`/api/messages?recipientId=${teacher.id}&recipientRole=teacher`);
-          const messagesData = await messagesResponse.json();
-          setMessages(messagesData);
+            if (student) {
+              setRole('student');
+              setUserId(student.id);
+              setRecipients(teachersList);
+              
+              // Get messages
+              const messagesResponse = await fetch(`/api/messages?recipientId=${student.id}&recipientRole=student`);
+              if (messagesResponse.ok) {
+                const messagesData = await messagesResponse.json();
+                setMessages(Array.isArray(messagesData) ? messagesData : []);
+              } else {
+                setMessages([]);
+              }
+            } else if (teacher) {
+              setRole('teacher');
+              setUserId(teacher.id);
+              setRecipients(studentsList);
+              
+              // Get messages
+              const messagesResponse = await fetch(`/api/messages?recipientId=${teacher.id}&recipientRole=teacher`);
+              if (messagesResponse.ok) {
+                const messagesData = await messagesResponse.json();
+                setMessages(Array.isArray(messagesData) ? messagesData : []);
+              } else {
+                setMessages([]);
+              }
+            } else {
+              router.push('/login');
+              return;
+            }
+          }
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erreur lors du chargement');

@@ -55,15 +55,27 @@ export default function TeacherNotesStudentsPage() {
 
         // Get all students
         const studentsResponse = await fetch('/api/students');
-        const studentsData = await studentsResponse.json();
-        setStudents(studentsData);
+        if (studentsResponse.ok) {
+          const studentsData = await studentsResponse.json();
+          const studentsList = Array.isArray(studentsData) ? studentsData : [];
+          setStudents(studentsList);
+        } else {
+          setStudents([]);
+        }
 
         // Get teacher's notes
         const notesResponse = await fetch(`/api/teachers/grades?teacherId=${teacher.id}`);
-        const notesData = await notesResponse.json();
-        setStudentNotes(notesData);
+        if (notesResponse.ok) {
+          const notesData = await notesResponse.json();
+          const notesList = Array.isArray(notesData) ? notesData : [];
+          setStudentNotes(notesList);
+        } else {
+          setStudentNotes([]);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erreur lors du chargement');
+        setStudents([]);
+        setStudentNotes([]);
       } finally {
         setLoading(false);
       }

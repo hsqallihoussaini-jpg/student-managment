@@ -26,11 +26,14 @@ export default function StudentsPage() {
       const res = await fetch('/api/students');
       if (res.ok) {
         const data = await res.json();
-        setStudents(data);
+        const studentsList = Array.isArray(data) ? data : [];
+        setStudents(studentsList);
       } else {
+        setStudents([]);
         setError('Erreur lors du chargement des étudiants');
       }
     } catch (error) {
+      setStudents([]);
       setError('Erreur lors du chargement des étudiants');
     } finally {
       setLoading(false);

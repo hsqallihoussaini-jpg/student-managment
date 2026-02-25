@@ -3,7 +3,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function DashboardLayout({
   children,
@@ -12,12 +12,43 @@ export default function DashboardLayout({
 }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [userRole, setUserRole] = useState<'student' | 'teacher' | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     }
   }, [status, router]);
+
+  useEffect(() => {
+    const checkUserRole = async () => {
+      if (!session?.user?.email) return;
+
+      try {
+        // Check if student
+        const studentsResponse = await fetch('/api/students');
+        const studentsData = await studentsResponse.json();
+        const student = studentsData.find((s: any) => s.email === session.user.email);
+        if (student) {
+          setUserRole('student');
+          return;
+        }
+
+        // Check if teacher
+        const teachersResponse = await fetch('/api/teachers');
+        const teachersData = await teachersResponse.json();
+        const teacher = teachersData.find((t: any) => t.email === session.user.email);
+        if (teacher) {
+          setUserRole('teacher');
+          return;
+        }
+      } catch (error) {
+        console.error('Error determining user role:', error);
+      }
+    };
+
+    checkUserRole();
+  }, [session]);
 
   if (status === 'loading') {
     return (
@@ -60,34 +91,72 @@ export default function DashboardLayout({
             >
               📊 Tableau de bord
             </Link>
-            
-            <div className="text-xs font-bold text-rose-600 uppercase px-4 py-2 mt-4">Étudiants</div>
-            <Link
-              href="/dashboard/students"
-              className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
-            >
-              👥 Liste des étudiants
-            </Link>
-            <Link
-              href="/dashboard/add-student"
-              className="block px-4 py-3 text-gray-700 hover:bg-orange-50 border-l-4 border-transparent hover:border-orange-500 rounded-lg transition"
-            >
-              ➕ Ajouter un étudiant
-            </Link>
 
-            <div className="text-xs font-bold text-orange-600 uppercase px-4 py-2 mt-4">Cours</div>
-            <Link
-              href="/dashboard/courses"
-              className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
-            >
-              📚 Liste des cours
-            </Link>
-            <Link
-              href="/dashboard/add-course"
-              className="block px-4 py-3 text-gray-700 hover:bg-orange-50 border-l-4 border-transparent hover:border-orange-500 rounded-lg transition"
-            >
-              ➕ Ajouter un cours
-            </Link>
+            {userRole === 'student' && (
+              <>
+                <div className="text-xs font-bold text-rose-600 uppercase px-4 py-2 mt-4">Mes cours</div>
+                <Link
+                  href="/dashboard/courses"
+                  className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
+                >
+                  📚 Mes cours
+                </Link>
+
+                <div className="text-xs font-bold text-orange-600 uppercase px-4 py-2 mt-4">Communication</div>
+                <Link
+                  href="/dashboard/messages"
+                  className="block px-4 py-3 text-gray-700 hover:bg-orange-50 border-l-4 border-transparent hover:border-orange-500 rounded-lg transition"
+                >
+                  💬 Messages
+                </Link>
+              </>
+            )}
+
+            {userRole === 'teacher' && (
+              <>
+                <div className="text-xs font-bold text-rose-600 uppercase px-4 py-2 mt-4">Gestion pédagogique</div>
+                <Link
+                  href="/dashboard/teacher/courses"
+                  className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
+                >
+                  📚 Mes cours
+                </Link>
+                <Link
+                  href="/dashboard/teacher/grades"
+                  className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
+                >
+                  📝 Gérer les notes
+                </Link>
+                <Link
+                  href="/dashboard/teacher/notes-students"
+                  className="block px-4 py-3 text-gray-700 hover:bg-rose-50 border-l-4 border-transparent hover:border-rose-500 rounded-lg transition"
+                >
+                  📋 Notes sur étudiants
+                </Link>
+
+                <div className="text-xs font-bold text-orange-600 uppercase px-4 py-2 mt-4">ADMINISTRATION</div>
+                <Link
+                  href="/dashboard/students"
+                  className="block px-4 py-3 text-gray-700 hover:bg-orange-50 border-l-4 border-transparent hover:border-orange-500 rounded-lg transition"
+                >
+                  👥 Liste des étudiants
+                </Link>
+                <Link
+                  href="/dashboard/add-student"
+                  className="block px-4 py-3 text-gray-700 hover:bg-orange-50 border-l-4 border-transparent hover:border-orange-500 rounded-lg transition"
+                >
+                  ➕ Ajouter un étudiant
+                </Link>
+
+                <div className="text-xs font-bold text-blue-600 uppercase px-4 py-2 mt-4">Communication</div>
+                <Link
+                  href="/dashboard/messages"
+                  className="block px-4 py-3 text-gray-700 hover:bg-blue-50 border-l-4 border-transparent hover:border-blue-500 rounded-lg transition"
+                >
+                  💬 Messages
+                </Link>
+              </>
+            )}
           </nav>
         </aside>
 

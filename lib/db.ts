@@ -5,6 +5,7 @@ import { promisify } from 'util';
 const DB_PATH = process.env.DATABASE_PATH || './database.db';
 
 let db: sqlite3.Database;
+let isInitialized = false;
 
 export function openDatabase() {
   return new Promise<sqlite3.Database>((resolve, reject) => {
@@ -150,6 +151,37 @@ export async function initializeDatabase() {
       )
     `);
 
+    // Available courses (predefined course templates)
+    await run(`
+      CREATE TABLE IF NOT EXISTS available_courses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        code TEXT UNIQUE NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT,
+        credits INTEGER
+      )
+    `);
+
+    // Insert predefined courses
+    const predefinedCourses = [
+      ['ALGO101', 'Algorithme', 'Introduction aux algorithmes et structures de données', 3],
+      ['ELEC201', 'Électronique', 'Fondamentaux de l\'électronique numérique et analogique', 4],
+      ['ARCH301', 'Architecture', 'Architecture des systèmes et des ordinateurs', 3],
+      ['LANG102', 'Langage C', 'Programmation en langage C et concepts de base', 4],
+      ['BURO101', 'Bureautique', 'Outils informatiques et logiciels de productivité', 2]
+    ];
+
+    for (const [code, name, description, credits] of predefinedCourses) {
+      try {
+        await run(
+          'INSERT OR IGNORE INTO available_courses (code, name, description, credits) VALUES (?, ?, ?, ?)',
+          [code, name, description, credits]
+        );
+      } catch (_) {
+        // Course already exists
+      }
+    }
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Error initializing database:', error);
@@ -166,6 +198,10 @@ export function runQuery(sql: string, params: any[] = []) {
     try {
       if (!db) {
         await openDatabase();
+        if (!isInitialized) {
+          await initializeDatabase();
+          isInitialized = true;
+        }
       }
       
       if (!db) {
@@ -188,6 +224,10 @@ export function getQuery(sql: string, params: any[] = []) {
     try {
       if (!db) {
         await openDatabase();
+        if (!isInitialized) {
+          await initializeDatabase();
+          isInitialized = true;
+        }
       }
       
       if (!db) {
@@ -210,6 +250,10 @@ export function allQuery(sql: string, params: any[] = []) {
     try {
       if (!db) {
         await openDatabase();
+        if (!isInitialized) {
+          await initializeDatabase();
+          isInitialized = true;
+        }
       }
       
       if (!db) {

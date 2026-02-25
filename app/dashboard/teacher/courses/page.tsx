@@ -21,7 +21,9 @@ export default function TeacherCoursesPage() {
   const [error, setError] = useState('');
   const [teacherId, setTeacherId] = useState<number | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [availableCourses, setAvailableCourses] = useState<any[]>([]);
   const [formData, setFormData] = useState({
+    availableCourseId: '',
     code: '',
     name: '',
     description: '',
@@ -56,10 +58,24 @@ export default function TeacherCoursesPage() {
 
         // Get teacher's courses
         const coursesResponse = await fetch(`/api/teachers/${teacher.id}/courses`);
-        const coursesData = await coursesResponse.json();
-        setCourses(coursesData);
+        if (coursesResponse.ok) {
+          const coursesData = await coursesResponse.json();
+          const coursesList = Array.isArray(coursesData) ? coursesData : [];
+          setCourses(coursesList);
+        } else {
+          setCourses([]);
+        }
+
+        // Get available courses
+        const availableResponse = await fetch('/api/available-courses');
+        if (availableResponse.ok) {
+          const availableData = await availableResponse.json();
+          const availableList = Array.isArray(availableData) ? availableData : [];
+          setAvailableCourses(availableList);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erreur lors du chargement des cours');
+        setCourses([]);
       } finally {
         setLoading(false);
       }
@@ -71,6 +87,20 @@ export default function TeacherCoursesPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectAvailableCourse = (courseId: number) => {
+    const selected = availableCourses.find(c => c.id === courseId);
+    if (selected) {
+      setFormData({
+        availableCourseId: courseId.toString(),
+        code: selected.code,
+        name: selected.name,
+        description: selected.description || '',
+        credits: selected.credits?.toString() || '',
+        semester: formData.semester,
+      });
+    }
   };
 
   const handleAddCourse = async (e: React.FormEvent) => {
@@ -100,7 +130,7 @@ export default function TeacherCoursesPage() {
       const coursesData = await coursesResponse.json();
       setCourses(coursesData);
 
-      setFormData({ code: '', name: '', description: '', credits: '', semester: '' });
+      setFormData({ availableCourseId: '', code: '', name: '', description: '', credits: '', semester: '' });
       setShowForm(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors de la création du cours');
@@ -166,6 +196,31 @@ export default function TeacherCoursesPage() {
         <div className="mb-8 bg-white rounded-lg shadow-lg p-6 border-l-4 border-orange-500">
           <h3 className="text-2xl font-bold mb-4 text-gray-800">Créer un nouveau cours</h3>
           <form onSubmit={handleAddCourse} className="space-y-4">
+            {/* Quick select from available courses */}
+            <div className="bg-gradient-to-r from-orange-50 to-rose-50 p-4 rounded-lg mb-6">
+              <p className="text-sm font-semibold text-gray-700 mb-3">📚 Sélectionner un cours prédéfini:</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2">
+                {availableCourses.map(course => (
+                  <button
+                    key={course.id}
+                    type="button"
+                    onClick={() => handleSelectAvailableCourse(course.id)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                      parseInt(formData.availableCourseId) === course.id
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-white text-gray-700 border border-gray-300 hover:border-orange-500 hover:bg-orange-50'
+                    }`}
+                  >
+                    {course.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="border-t-2 border-gray-200 pt-4">
+              <p className="text-sm font-semibold text-gray-600 mb-3">Ou personnaliser manuellement:</p>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="text"
