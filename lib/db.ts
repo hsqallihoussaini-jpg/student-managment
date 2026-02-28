@@ -27,7 +27,16 @@ export function openDatabase() {
 
 export async function initializeDatabase() {
   const database = await openDatabase();
-  const run = promisify(database.run.bind(database));
+  
+  // Create a promisified run function that handles parameters correctly
+  const run = (sql: string, params: any[] = []) => {
+    return new Promise<void>((resolve, reject) => {
+      database.run(sql, params, (err: any) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+  };
   
   try {
     // Users table
