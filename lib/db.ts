@@ -406,6 +406,21 @@ export async function initializeDatabase() {
         ['Mohamed', 'Professeur', 'teacher@example.com', '0600000002', 'Informatique', 'Développement Web']);
     }
 
+    // Seed main user account
+    const existingMain = await new Promise<any>((resolve, reject) => {
+      database.get('SELECT id FROM users WHERE email = ?', ['h.sqallihoussaini@esisa.ac.ma'], (err: any, row: any) => {
+        if (err) reject(err); else resolve(row);
+      });
+    });
+
+    if (!existingMain) {
+      const mainHash = await bcrypt.hash('password123', 10);
+      await run('INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)',
+        ['h.sqallihoussaini@esisa.ac.ma', mainHash, 'Houssaini Sqalli', 'student']);
+      await run('INSERT INTO students (firstName, lastName, email, phone, matricule) VALUES (?, ?, ?, ?, ?)',
+        ['Houssaini', 'Sqalli', 'h.sqallihoussaini@esisa.ac.ma', '0600000003', 'STU000003']);
+    }
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Error initializing database:', error);
