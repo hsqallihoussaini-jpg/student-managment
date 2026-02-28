@@ -1,6 +1,7 @@
 import sqlite3 from 'sqlite3';
 import path from 'path';
 import { promisify } from 'util';
+import bcrypt from 'bcryptjs';
 
 const DB_PATH = process.env.DATABASE_PATH || './database.db';
 
@@ -374,6 +375,35 @@ export async function initializeDatabase() {
       } catch (_) {
         // Course already exists
       }
+    }
+
+    // Seed test accounts (student + teacher)
+    const existingStudent = await new Promise<any>((resolve, reject) => {
+      database.get('SELECT id FROM users WHERE email = ?', ['student@example.com'], (err: any, row: any) => {
+        if (err) reject(err); else resolve(row);
+      });
+    });
+
+    if (!existingStudent) {
+      const studentHash = await bcrypt.hash('password123', 10);
+      await run('INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)', 
+        ['student@example.com', studentHash, 'Ahmed Etudiant', 'student']);
+      await run('INSERT INTO students (firstName, lastName, email, phone, matricule) VALUES (?, ?, ?, ?, ?)',
+        ['Ahmed', 'Etudiant', 'student@example.com', '0600000001', 'STU000001']);
+    }
+
+    const existingTeacher = await new Promise<any>((resolve, reject) => {
+      database.get('SELECT id FROM users WHERE email = ?', ['teacher@example.com'], (err: any, row: any) => {
+        if (err) reject(err); else resolve(row);
+      });
+    });
+
+    if (!existingTeacher) {
+      const teacherHash = await bcrypt.hash('password123', 10);
+      await run('INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)',
+        ['teacher@example.com', teacherHash, 'Mohamed Professeur', 'teacher']);
+      await run('INSERT INTO teachers (firstName, lastName, email, phone, department, specialization) VALUES (?, ?, ?, ?, ?, ?)',
+        ['Mohamed', 'Professeur', 'teacher@example.com', '0600000002', 'Informatique', 'Développement Web']);
     }
 
     console.log('Database initialized successfully');
