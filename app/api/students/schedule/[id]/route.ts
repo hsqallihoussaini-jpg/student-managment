@@ -3,10 +3,11 @@ import { runQuery } from '@/lib/db';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const scheduleId = parseInt(params.id);
+    const { id } = await params;
+    const scheduleId = parseInt(id);
     const data = await request.json();
     const { dayOfWeek, startTime, endTime, room, instructor } = data;
 
@@ -35,10 +36,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const scheduleId = parseInt(params.id);
+    const { id } = await params;
+    const scheduleId = parseInt(id);
 
     await runQuery(
       'DELETE FROM student_schedule WHERE id = ?',

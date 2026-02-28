@@ -3,16 +3,17 @@ import { getQuery, runQuery } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const attendance = await getQuery(
       `SELECT a.*, s.firstName, s.lastName, c.name as courseName
        FROM attendance a
        LEFT JOIN students s ON a.studentId = s.id
        LEFT JOIN courses c ON a.courseId = c.id
        WHERE a.id = ?`,
-      [params.id]
+      [id]
     );
 
     if (!attendance) {
@@ -28,15 +29,16 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { status, notes } = body;
 
     await runQuery(
-      `UPDATE attendance SET status = ?, notes = ?, markedAt = datetime('now') WHERE id = ?`,
-      [status, notes || '', params.id]
+      `UPDATE attendance SET status = ?, notes = ?, markedAt = CURRENT_TIMESTAMP WHERE id = ?`,
+      [status, notes || '', id]
     );
 
     return NextResponse.json({ message: 'Attendance updated' });

@@ -3,10 +3,11 @@ import { allQuery } from '@/lib/db';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const courseId = parseInt(params.id);
+    const { id } = await params;
+    const courseId = parseInt(id);
 
     const enrollments = await allQuery(
       `SELECT e.*, s.firstName, s.lastName, c.name as courseName 

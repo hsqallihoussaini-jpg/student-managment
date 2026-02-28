@@ -3,16 +3,17 @@ import { getQuery, runQuery } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const material = await getQuery(
       `SELECT cm.*, t.firstName, t.lastName, c.name as courseName
        FROM course_materials cm
        LEFT JOIN teachers t ON cm.teacherId = t.id
        LEFT JOIN courses c ON cm.courseId = c.id
        WHERE cm.id = ?`,
-      [params.id]
+      [id]
     );
 
     if (!material) {
@@ -28,10 +29,11 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await runQuery('DELETE FROM course_materials WHERE id = ?', [params.id]);
+    const { id } = await params;
+    await runQuery('DELETE FROM course_materials WHERE id = ?', [id]);
     return NextResponse.json({ message: 'Material deleted' });
   } catch (error) {
     console.error('Error deleting material:', error);

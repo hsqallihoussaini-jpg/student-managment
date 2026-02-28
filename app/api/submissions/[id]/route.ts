@@ -3,16 +3,17 @@ import { getQuery, runQuery } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const submission = await getQuery(
       `SELECT s.*, a.title as assignmentTitle, st.firstName, st.lastName
        FROM submissions s
        LEFT JOIN assignments a ON s.assignmentId = a.id
        LEFT JOIN students st ON s.studentId = st.id
        WHERE s.id = ?`,
-      [params.id]
+      [id]
     );
 
     if (!submission) {
@@ -28,15 +29,16 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { grade, feedback } = body;
 
     await runQuery(
       `UPDATE submissions SET grade = ?, feedback = ? WHERE id = ?`,
-      [grade || null, feedback || '', params.id]
+      [grade || null, feedback || '', id]
     );
 
     return NextResponse.json({ message: 'Submission graded' });

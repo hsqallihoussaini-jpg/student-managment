@@ -12,15 +12,16 @@ async function checkAuth() {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await checkAuth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const student = await getQuery('SELECT * FROM students WHERE id = ?', [params.id]);
+    const student = await getQuery('SELECT * FROM students WHERE id = ?', [id]);
     if (!student) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 });
     }
@@ -34,9 +35,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await checkAuth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -60,11 +62,11 @@ export async function PUT(
         data.zipCode,
         data.country,
         data.status || 'active',
-        params.id,
+        id,
       ]
     );
 
-    const updatedStudent = await getQuery('SELECT * FROM students WHERE id = ?', [params.id]);
+    const updatedStudent = await getQuery('SELECT * FROM students WHERE id = ?', [id]);
     return NextResponse.json(updatedStudent);
   } catch (error) {
     console.error('Error updating student:', error);
@@ -74,15 +76,16 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await checkAuth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await runQuery('DELETE FROM students WHERE id = ?', [params.id]);
+    await runQuery('DELETE FROM students WHERE id = ?', [id]);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting student:', error);

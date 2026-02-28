@@ -3,10 +3,11 @@ import { allQuery, runQuery } from '@/lib/db';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const teacherId = parseInt(params.id);
+    const { id } = await params;
+    const teacherId = parseInt(id);
 
     const courses = await allQuery(
       'SELECT * FROM courses WHERE teacherId = ?',
@@ -25,10 +26,11 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const teacherId = parseInt(params.id);
+    const { id } = await params;
+    const teacherId = parseInt(id);
     const data = await request.json();
     const { code, name, description, credits, semester } = data;
 
@@ -60,10 +62,11 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const teacherId = parseInt(params.id);
+    const { id } = await params;
+    const teacherId = parseInt(id);
     const { searchParams } = new URL(request.url);
     const courseId = searchParams.get('courseId');
 

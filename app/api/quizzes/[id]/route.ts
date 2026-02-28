@@ -3,16 +3,17 @@ import { getQuery, allQuery, runQuery } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const quiz = await getQuery(
       `SELECT q.*, t.firstName, t.lastName, c.name as courseName
        FROM quizzes q
        LEFT JOIN teachers t ON q.teacherId = t.id
        LEFT JOIN courses c ON q.courseId = c.id
        WHERE q.id = ?`,
-      [params.id]
+      [id]
     );
 
     if (!quiz) {
@@ -22,7 +23,7 @@ export async function GET(
     // Get questions
     const questions = await allQuery(
       `SELECT id, quizId, questionText, questionType, options, points FROM quiz_questions WHERE quizId = ?`,
-      [params.id]
+      [id]
     );
 
     // Parse options JSON
@@ -40,16 +41,17 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { title, description, dueDate, timeLimit, totalPoints } = body;
 
     await runQuery(
       `UPDATE quizzes SET title = ?, description = ?, dueDate = ?, timeLimit = ?, totalPoints = ?
        WHERE id = ?`,
-      [title, description || '', dueDate, timeLimit || 60, totalPoints || 20, params.id]
+      [title, description || '', dueDate, timeLimit || 60, totalPoints || 20, id]
     );
 
     return NextResponse.json({ message: 'Quiz updated' });
@@ -61,12 +63,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await runQuery('DELETE FROM quiz_questions WHERE quizId = ?', [params.id]);
-    await runQuery('DELETE FROM quiz_answers WHERE quizId = ?', [params.id]);
-    await runQuery('DELETE FROM quizzes WHERE id = ?', [params.id]);
+    const { id } = await params;
+    await runQuery('DELETE FROM quiz_questions WHERE quizId = ?', [id]);
+    await runQuery('DELETE FROM quiz_answers WHERE quizId = ?', [id]);
+    await runQuery('DELETE FROM quizzes WHERE id = ?', [id]);
 
     return NextResponse.json({ message: 'Quiz deleted' });
   } catch (error) {

@@ -12,15 +12,16 @@ async function checkAuth() {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await checkAuth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const courseId = parseInt(params.id);
+    const courseId = parseInt(id);
     const data = await request.json();
     const { studentId } = data;
 

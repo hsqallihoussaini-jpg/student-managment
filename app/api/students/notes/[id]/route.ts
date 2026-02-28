@@ -3,10 +3,11 @@ import { runQuery, getQuery } from '@/lib/db';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const noteId = parseInt(params.id);
+    const { id } = await params;
+    const noteId = parseInt(id);
     const data = await request.json();
     const { title, content } = data;
 
@@ -35,10 +36,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const noteId = parseInt(params.id);
+    const { id } = await params;
+    const noteId = parseInt(id);
 
     await runQuery(
       'DELETE FROM student_notes WHERE id = ?',

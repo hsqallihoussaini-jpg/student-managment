@@ -3,15 +3,16 @@ import { getQuery, runQuery } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const notification = await getQuery(
       `SELECT n.*, c.name as courseName
        FROM notifications n
        LEFT JOIN courses c ON n.courseId = c.id
        WHERE n.id = ?`,
-      [params.id]
+      [id]
     );
 
     if (!notification) {
@@ -27,15 +28,16 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { isRead } = body;
 
     await runQuery(
       `UPDATE notifications SET isRead = ? WHERE id = ?`,
-      [isRead ? 1 : 0, params.id]
+      [isRead ? 1 : 0, id]
     );
 
     return NextResponse.json({ message: 'Notification updated' });

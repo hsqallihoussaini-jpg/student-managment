@@ -3,16 +3,17 @@ import { getQuery, runQuery } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const assignment = await getQuery(
       `SELECT a.*, t.firstName, t.lastName, c.name as courseName
        FROM assignments a
        LEFT JOIN teachers t ON a.teacherId = t.id
        LEFT JOIN courses c ON a.courseId = c.id
        WHERE a.id = ?`,
-      [params.id]
+      [id]
     );
 
     if (!assignment) {
@@ -28,16 +29,17 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { title, description, dueDate, maxScore } = body;
 
     await runQuery(
       `UPDATE assignments SET title = ?, description = ?, dueDate = ?, maxScore = ?
        WHERE id = ?`,
-      [title, description || '', dueDate, maxScore || 20, params.id]
+      [title, description || '', dueDate, maxScore || 20, id]
     );
 
     return NextResponse.json({ message: 'Assignment updated' });
@@ -49,10 +51,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await runQuery('DELETE FROM assignments WHERE id = ?', [params.id]);
+    const { id } = await params;
+    await runQuery('DELETE FROM assignments WHERE id = ?', [id]);
     return NextResponse.json({ message: 'Assignment deleted' });
   } catch (error) {
     console.error('Error deleting assignment:', error);
