@@ -12,42 +12,21 @@ export default function DashboardPage() {
   useEffect(() => {
     if (status === 'loading') return;
 
-    if (!session?.user?.email) {
+    if (!session?.user) {
+      router.push('/login');
       return;
     }
 
-    // Check user role and redirect accordingly
-    const checkUserRole = async () => {
-      try {
-        // Check if user is a student
-        const studentsResponse = await fetch('/api/students');
-        const studentsData = await studentsResponse.json();
-        const student = studentsData.find((s: any) => s.email === session.user.email);
+    // Use role from JWT session directly - no API calls needed
+    const role = (session.user as any).role;
 
-        if (student) {
-          router.push('/dashboard/student');
-          return;
-        }
-
-        // Check if user is a teacher
-        const teachersResponse = await fetch('/api/teachers');
-        const teachersData = await teachersResponse.json();
-        const teacher = teachersData.find((t: any) => t.email === session.user.email);
-
-        if (teacher) {
-          router.push('/dashboard/teacher');
-          return;
-        }
-
-        // If neither student nor teacher, show error
-        setError('Votre profil utilisateur n\'a pu être déterminé. Veuillez contacter l\'administrateur.');
-      } catch (error) {
-        console.error('Error checking user role:', error);
-        setError('Une erreur s\'est produite lors de la détermination de votre profil.');
-      }
-    };
-
-    checkUserRole();
+    if (role === 'student') {
+      router.push('/dashboard/student');
+    } else if (role === 'teacher') {
+      router.push('/dashboard/teacher');
+    } else {
+      setError('Votre profil utilisateur n\'a pu être déterminé. Veuillez contacter l\'administrateur.');
+    }
   }, [session, status, router]);
 
   if (error) {

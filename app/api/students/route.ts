@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { allQuery, getQuery, runQuery } from '@/lib/db';
 import { getServerSession } from 'next-auth/next';
-import { GET as authHandler } from '../auth/[...nextauth]/route';
+import { authOptions } from '../auth/[...nextauth]/route';
 
-async function checkAuth(request: NextRequest) {
-  const session = await getServerSession({ req: request } as any);
+async function checkAuth() {
+  const session = await getServerSession(authOptions);
   if (!session) {
     return null;
   }
@@ -13,7 +13,7 @@ async function checkAuth(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await checkAuth(request);
+    const session = await checkAuth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await checkAuth(request);
+    const session = await checkAuth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

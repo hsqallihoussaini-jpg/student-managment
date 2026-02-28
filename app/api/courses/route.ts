@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { allQuery, getQuery, runQuery } from '@/lib/db';
 import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]/route';
 
 async function checkAuth() {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) {
     return null;
   }
